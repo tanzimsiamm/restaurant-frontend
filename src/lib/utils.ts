@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from 'clsx';
+import clsx, { ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,8 +23,6 @@ export function truncateText(text: string, length: number): string {
 }
 
 export function getImageUrl(url: string): string {
-  // If it's already a full URL, return it
   if (url.startsWith('http')) return url;
-  // Otherwise, construct the full URL (adjust based on your image storage)
   return url;
 }
