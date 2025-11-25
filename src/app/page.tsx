@@ -1,7 +1,9 @@
-const Home = () => {
-  return (
-    <div className="text-6xl bg-amber-400 ">this is home page baby</div>
-  )
-}
+import HeroSlider from "../components/home/HeroSlider";
 
-export default Home
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-gray-50">
+      <HeroSlider />
+    </main>
+  );
+}

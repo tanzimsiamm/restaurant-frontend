@@ -28,6 +28,20 @@ export interface IProduct {
   updatedAt: string;
 }
 
+export interface ISlider {
+  _id: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  image: string;
+  buttonText?: string;
+  buttonLink?: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 export interface ApiResponse<T> {
   success: boolean;
