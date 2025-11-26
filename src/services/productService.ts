@@ -15,11 +15,24 @@ interface ProductQueryParams {
 
 export const productService = {
   getAll: async (params?: ProductQueryParams) => {
-    const response = await api.get<ApiResponse<PaginatedResponse<IProduct>>>(
+    console.log('📡 Fetching products with params:', params);
+    
+    const response = await api.get<ApiResponse<{ 
+      success: boolean;
+      data: PaginatedResponse<IProduct> 
+    }>>(
       '/products',
       { params }
     );
-    return response.data;
+    
+    console.log('✅ Products response:', response.data);
+    
+    // Handle nested data structure from backend
+    return {
+      success: response.data.success,
+      message: response.data.message,
+      data: response.data.data.data // Access nested data.data
+    };
   },
 
   getById: async (id: string) => {
@@ -33,12 +46,25 @@ export const productService = {
   },
 
   getFeatured: async (limit: number = 8) => {
-    const response = await api.get<ApiResponse<PaginatedResponse<IProduct>>>(
+    console.log('📡 Fetching featured products, limit:', limit);
+    
+    const response = await api.get<ApiResponse<{
+      success: boolean;
+      data: PaginatedResponse<IProduct>
+    }>>(
       '/products',
       {
-        params: { isFeatured: true, limit },
+        params: { isFeatured: true, limit, isActive: true },
       }
     );
-    return response.data;
+    
+    console.log('✅ Featured products response:', response.data);
+    
+    // Handle nested data structure
+    return {
+      success: response.data.success,
+      message: response.data.message,
+      data: response.data.data.data // Access nested data.data
+    };
   },
 };

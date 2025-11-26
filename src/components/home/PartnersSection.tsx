@@ -7,16 +7,19 @@ import Image from 'next/image';
 
 const PartnersSection: React.FC = () => {
   const partners = [
-    { id: 1, name: 'Partner 1', logo: 'https://via.placeholder.com/150x80?text=Partner+1' },
-    { id: 2, name: 'Partner 2', logo: 'https://via.placeholder.com/150x80?text=Partner+2' },
-    { id: 3, name: 'Partner 3', logo: 'https://via.placeholder.com/150x80?text=Partner+3' },
-    { id: 4, name: 'Partner 4', logo: 'https://via.placeholder.com/150x80?text=Partner+4' },
-    { id: 5, name: 'Partner 5', logo: 'https://via.placeholder.com/150x80?text=Partner+5' },
-    { id: 6, name: 'Partner 6', logo: 'https://via.placeholder.com/150x80?text=Partner+6' },
+    { id: 1, name: 'Restaurant', logo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=150&h=80&fit=crop' },
+    { id: 2, name: 'Bakery', logo: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=150&h=80&fit=crop' },
+    { id: 3, name: 'Fork & Spoon', logo: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=150&h=80&fit=crop' },
+    { id: 4, name: 'Wolf Coffee', logo: 'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=150&h=80&fit=crop' },
+    { id: 5, name: 'Bistro', logo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=150&h=80&fit=crop' },
+    { id: 6, name: 'Bake', logo: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=150&h=80&fit=crop' },
   ];
 
+  // Duplicate the partners array for seamless infinite scroll
+  const duplicatedPartners = [...partners, ...partners];
+
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-white">
       <Container>
         <motion.div
           initial="initial"
@@ -25,32 +28,44 @@ const PartnersSection: React.FC = () => {
           variants={fadeInUp}
         >
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              We Work With The Best People
+            <p className="text-red-600 text-sm font-semibold uppercase tracking-wide mb-2">
+              Partners & Clients
+            </p>
+            <h2 className="text-4xl font-bold text-gray-900">
+              We work with the best people
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-            {partners.map((partner, index) => (
-              <motion.div
-                key={partner.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-center"
-              >
-                <div className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="overflow-hidden relative">
+            <motion.div
+              className="flex gap-12"
+              animate={{
+                x: [-1200, 0],
+              }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 20,
+                  ease: "linear",
+                },
+              }}
+            >
+              {duplicatedPartners.map((partner, index) => (
+                <div
+                  key={`${partner.id}-${index}`}
+                  className="flex-shrink-0 flex items-center justify-center"
+                >
                   <Image
                     src={partner.logo}
                     alt={partner.name}
                     width={150}
                     height={80}
-                    className="grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+                    className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
                   />
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </motion.div>
           </div>
         </motion.div>
       </Container>

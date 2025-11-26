@@ -1,126 +1,83 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { IProduct } from "@/src/types";
-import { formatPrice, calculateDiscount } from "@/src/lib/utils";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import Card from "../ui/Card";
-import Button from "../ui/Button";
-import Badge from "../ui/Badge";
-import Image from "next/image";
 
 interface ProductCardProps {
   product: IProduct;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const discount = calculateDiscount(product.price, product.discountPrice);
-
   return (
-    <Card hover>
+    <div className="bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+      {/* Product Image */}
       <Link href={`/products/${product.slug}`}>
-        <div className="relative">
-          {/* Product Image */}
-          <div className="relative h-56 overflow-hidden">
-            <Image
-              src={product.images[0]}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-              width={300}
-              height={300}
-              unoptimized={false}
-            />
-
-            {/* Badges */}
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {discount > 0 && (
-                <Badge variant="danger" className="font-semibold">
-                  {discount}% OFF
-                </Badge>
-              )}
-              {product.isFeatured && (
-                <Badge variant="warning" className="font-semibold">
-                  Featured
-                </Badge>
-              )}
-            </div>
-
-            {/* Out of Stock Overlay */}
-            {product.stock === 0 && (
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold">
-                  Out of Stock
-                </span>
-              </div>
-            )}
-          </div>
+        <div className="relative h-72 overflow-hidden">
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
         </div>
       </Link>
 
       {/* Product Info */}
-      <div className="p-4">
-        {/* Category */}
-        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-          {typeof product.category === "object"
-            ? product.category.name
-            : "Category"}
-        </p>
+      <div className="p-6">
+        {/* Name and Category Badge */}
+        <div className="flex items-start justify-between mb-4">
+          <Link href={`/products/${product.slug}`}>
+            <h3 className="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors">
+              {product.name}
+            </h3>
+          </Link>
+          <span className="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-medium whitespace-nowrap ml-2">
+            {typeof product.category === "object"
+              ? product.category.name
+              : "Category"}
+          </span>
+        </div>
 
-        {/* Product Name */}
-        <Link href={`/products/${product.slug}`}>
-          <h3 className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors line-clamp-2 mb-2">
-            {product.name}
-          </h3>
-        </Link>
-
-        {/* Rating */}
-        {product.rating && product.rating > 0 && (
-          <div className="flex items-center gap-1 mb-2">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium text-gray-700">
-              {product.rating.toFixed(1)}
-            </span>
-            {product.reviewCount && (
-              <span className="text-sm text-gray-500">
-                ({product.reviewCount})
-              </span>
-            )}
+        {/* Rating and Price */}
+        <div className="flex items-center justify-between mb-6">
+          {/* Stars */}
+          <div className="flex gap-1">
+            {[...Array(5)].map((_, i) => (
+              <svg
+                key={i}
+                className={`w-6 h-6 ${
+                  i < Math.floor(product.rating || 5)
+                    ? "fill-yellow-400"
+                    : "fill-gray-300"
+                }`}
+                viewBox="0 0 24 24"
+              >
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            ))}
           </div>
-        )}
 
-        {/* Price */}
-        <div className="flex items-center gap-2 mb-4">
-          {product.discountPrice ? (
-            <>
-              <span className="text-xl font-bold text-primary-600">
-                {formatPrice(product.discountPrice)}
-              </span>
-              <span className="text-sm text-gray-500 line-through">
-                {formatPrice(product.price)}
-              </span>
-            </>
-          ) : (
-            <span className="text-xl font-bold text-gray-900">
-              {formatPrice(product.price)}
-            </span>
-          )}
+          {/* Price */}
+          <div className="text-3xl font-bold text-gray-900">
+            ${product.discountPrice || product.price}
+          </div>
         </div>
 
         {/* Add to Cart Button */}
-        <Button
-          className="w-full"
+        <button
           disabled={product.stock === 0}
           onClick={(e) => {
             e.preventDefault();
-            // TODO: Add to cart functionality
             console.log("Add to cart:", product._id);
           }}
+          className="w-full bg-gray-900 text-white py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ShoppingCart className="w-4 h-4 mr-2" />
+          <ShoppingCart className="w-5 h-5" />
           {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-        </Button>
+        </button>
       </div>
-    </Card>
+    </div>
   );
 };
 

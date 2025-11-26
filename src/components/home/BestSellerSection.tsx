@@ -1,15 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
-import Container from '../ui/Container';
-import Button from '../ui/Button';
-import Loading from '../ui/Loading';
 import { ICategory, IProduct } from '@/src/types';
 import { categoryService } from '@/src/services/categoryService';
 import { productService } from '@/src/services/productService';
-import { fadeInUp, staggerContainer } from '@/src/animations/variants';
 import ProductCard from '../products/ProductCard';
 
 const BestSellerSection: React.FC = () => {
@@ -17,37 +12,53 @@ const BestSellerSection: React.FC = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  // Fetch categories on mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategories = async () => {
       try {
-        const [categoriesRes, productsRes] = await Promise.all([
-          categoryService.getAll(true),
-          productService.getAll({ limit: 12 }),
-        ]);
-        setCategories(categoriesRes.data);
-        setProducts(productsRes.data.products);
+        console.log('🔄 Fetching categories...');
+        const response = await categoryService.getAll(true);
+        console.log('✅ Categories received:', response);
+        setCategories(response.data || []);
       } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false);
+        console.error('❌ Failed to fetch categories:', error);
+        setError('Failed to load categories');
       }
     };
 
-    fetchData();
+    fetchCategories();
   }, []);
 
+  // Fetch products when category changes
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
+      setError(null);
+      
       try {
+        console.log('🔄 Fetching products for category:', selectedCategory);
+        
         const response = await productService.getAll({
           category: selectedCategory === 'all' ? undefined : selectedCategory,
           limit: 12,
+          isActive: true,
         });
-        setProducts(response.data.products);
-      } catch (error) {
-        console.error('Failed to fetch products:', error);
+        
+        console.log('✅ Products received:', response);
+        
+        if (response.data && response.data.products) {
+          setProducts(response.data.products);
+        } else {
+          console.error('❌ Invalid products response:', response);
+          setProducts([]);
+        }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        console.error('❌ Failed to fetch products:', error);
+        setError(error?.response?.data?.message || 'Failed to load products');
+        setProducts([]);
       } finally {
         setLoading(false);
       }
@@ -57,91 +68,86 @@ const BestSellerSection: React.FC = () => {
   }, [selectedCategory]);
 
   return (
-    <section className="py-16 bg-gray-50">
-      <Container>
-        <motion.div
-          initial="initial"
-          whileInView="animate"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-        >
-          {/* Section Header */}
-          <motion.div variants={fadeInUp} className="text-center mb-8">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Our Best Seller Dishes
-            </h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              Our fresh garden salad is a light and refreshing option. It features 
-              a mix of crisp lettuce, juicy tomatoes all tossed in your choice of 
-              dressing.
-            </p>
-          </motion.div>
+    <section className="min-h-screen bg-linear-to-b from-pink-50 to-white py-16 px-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+            Our best Seller Dishes
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Our fresh garden salad is a light and refreshing option. It features a
+            mix of crisp lettuce, juicy tomatoe all tossed in your choice of
+            dressing.
+          </p>
+        </div>
 
-          {/* Category Tabs and Action Buttons */}
-          <motion.div
-            variants={fadeInUp}
-            className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4"
-          >
-            {/* Category Tabs */}
-            <div className="flex flex-wrap gap-2">
+        {/* Category Filters and Action Buttons */}
+        <div className="flex flex-wrap items-center justify-between mb-12 gap-4">
+          {/* Category Buttons */}
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-8 py-3 rounded-full font-medium text-lg transition-all duration-300 ${
+                selectedCategory === 'all'
+                  ? 'bg-gray-900 text-white shadow-lg'
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:shadow-md'
+              }`}
+            >
+              All
+            </button>
+            {categories.map((category) => (
               <button
-                onClick={() => setSelectedCategory('all')}
-                className={`px-6 py-2 rounded-full font-medium transition-all ${
-                  selectedCategory === 'all'
-                    ? 'bg-primary-600 text-white shadow-md'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
+                key={category._id}
+                onClick={() => setSelectedCategory(category._id)}
+                className={`px-8 py-3 rounded-full font-medium text-lg transition-all duration-300 ${
+                  selectedCategory === category._id
+                    ? 'bg-gray-900 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border border-gray-200 hover:border-gray-300 hover:shadow-md'
                 }`}
               >
-                All
+                {category.name}
               </button>
-              {categories.slice(0, 3).map((category) => (
-                <button
-                  key={category._id}
-                  onClick={() => setSelectedCategory(category._id)}
-                  className={`px-6 py-2 rounded-full font-medium transition-all ${
-                    selectedCategory === category._id
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))}
-            </div>
+            ))}
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <Button variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Food
-              </Button>
-              <Button variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Category
-              </Button>
-            </div>
-          </motion.div>
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg">
+              <Plus className="w-5 h-5" />
+              Add Food
+            </button>
+            <button className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg">
+              <Plus className="w-5 h-5" />
+              Add Category
+            </button>
+          </div>
+        </div>
 
-          {/* Products Grid */}
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <Loading size="lg" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product, index) => (
-                <motion.div
-                  key={product._id}
-                  variants={fadeInUp}
-                  custom={index}
-                >
-                  <ProductCard product={product} />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-      </Container>
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-gray-900"></div>
+          </div>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">No products found in this category</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 };

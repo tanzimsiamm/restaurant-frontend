@@ -2,6 +2,7 @@ export interface ICategory {
   _id: string;
   name: string;
   slug: string;
+  order?: number;
   description?: string;
   image?: string;
   isActive: boolean;
