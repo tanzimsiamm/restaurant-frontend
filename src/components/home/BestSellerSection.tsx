@@ -6,6 +6,7 @@ import { ICategory, IProduct } from "@/src/types";
 import { categoryService } from "@/src/services/categoryService";
 import { productService } from "@/src/services/productService";
 import ProductCard from "../products/ProductCard";
+import Button from "../ui/Button";
 
 const BestSellerSection: React.FC = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -75,42 +76,36 @@ const BestSellerSection: React.FC = () => {
 
           {/* Categories */}
           <div className="flex flex-wrap gap-3">
-            <button
+            <Button
+              variant={selectedCategory === "all" ? "dark" : "outline"}
+              size="md"
               onClick={() => setSelectedCategory("all")}
-              className={`px-5 py-2 md:px-7 md:py-3 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
-                selectedCategory === "all"
-                  ? "bg-gray-900 text-white shadow-md"
-                  : "bg-white text-gray-700 border border-gray-200 hover:shadow"
-              }`}
             >
               All
-            </button>
+            </Button>
 
             {categories.map((category) => (
-              <button
+              <Button
                 key={category._id}
+                variant={selectedCategory === category._id ? "dark" : "outline"}
+                size="md"
                 onClick={() => setSelectedCategory(category._id)}
-                className={`px-5 py-2 md:px-7 md:py-3 rounded-full text-sm md:text-base font-medium transition-all duration-300 ${
-                  selectedCategory === category._id
-                    ? "bg-gray-900 text-white shadow-md"
-                    : "bg-white text-gray-700 border border-gray-200 hover:shadow"
-                }`}
               >
                 {category.name}
-              </button>
+              </Button>
             ))}
           </div>
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-3 justify-center lg:justify-end">
-            <button className="flex items-center gap-2 px-5 py-2 md:px-6 md:py-3 bg-gray-900 text-white rounded-full font-medium text-sm md:text-base shadow hover:bg-gray-800">
+            <Button variant="dark" size="md">
               <Plus className="w-4 h-4 md:w-5 md:h-5" />
               Add Food
-            </button>
-            <button className="flex items-center gap-2 px-5 py-2 md:px-6 md:py-3 bg-gray-900 text-white rounded-full font-medium text-sm md:text-base shadow hover:bg-gray-800">
+            </Button>
+            <Button variant="dark" size="md">
               <Plus className="w-4 h-4 md:w-5 md:h-5" />
               Add Category
-            </button>
+            </Button>
           </div>
         </div>
 

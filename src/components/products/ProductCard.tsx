@@ -4,6 +4,7 @@
 import { IProduct } from "@/src/types";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import Button from "../ui/Button";
 
 interface ProductCardProps {
   product: IProduct;
@@ -11,14 +12,14 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-    <div className="bg-white overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+    <div className="bg-white overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
       {/* Product Image */}
       <Link href={`/products/${product.slug}`}>
         <div className="relative h-72 overflow-hidden">
           <img
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
           />
         </div>
       </Link>
@@ -28,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Name and Category Badge */}
         <div className="flex items-start justify-between mb-4">
           <Link href={`/products/${product.slug}`}>
-            <h3 className="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors">
+            <h3 className="text-2xl font-bold text-gray-900 hover:text-gray-700 transition-colors duration-200">
               {product.name}
             </h3>
           </Link>
@@ -65,17 +66,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Add to Cart Button */}
-        <button
+        <Button
+          variant="dark"
+          size="lg"
           disabled={product.stock === 0}
           onClick={(e) => {
             e.preventDefault();
             console.log("Add to cart:", product._id);
           }}
-          className="w-full bg-gray-900 text-white py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-3 hover:bg-gray-800 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           <ShoppingCart className="w-5 h-5" />
           {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-// import ErrorBoundary from "../components/common/ErrorBoundary";
+import ErrorBoundary from "../components/common/ErrorBoundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,9 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="font-sans">
-        {/* <ErrorBoundary> */}
+        <ErrorBoundary>
           <main className="min-h-screen">{children}</main>
-        {/* </ErrorBoundary> */}
+        </ErrorBoundary>
       </body>
     </html>
   );

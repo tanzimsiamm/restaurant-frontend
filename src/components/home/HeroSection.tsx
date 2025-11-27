@@ -149,14 +149,13 @@ const HeroSection: React.FC = () => {
                       ) : searchResults.length > 0 ? (
                         <div className="py-2">
                           {searchResults.map((product) => (
-                            <Link
+                            <div
                               key={product._id}
-                              href={`/products/${product.slug}`}
                               onClick={() => {
                                 setSearchOpen(false);
                                 setSearchQuery("");
                               }}
-                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-gray-800"
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-gray-800 cursor-pointer"
                             >
                               <div className="relative w-12 h-12 shrink-0">
                                 <Image
@@ -176,7 +175,7 @@ const HeroSection: React.FC = () => {
                                   ${product.discountPrice || product.price}
                                 </p>
                               </div>
-                            </Link>
+                            </div>
                           ))}
                         </div>
                       ) : searchQuery.trim().length >= 2 ? (

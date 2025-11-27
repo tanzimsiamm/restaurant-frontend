@@ -23,18 +23,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center rounded-full font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary:
-        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-md hover:shadow-lg active:scale-95",
+        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500",
       secondary:
-        "bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500 shadow-md hover:shadow-lg active:scale-95",
+        "bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500",
       outline:
-        "border-2 border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50 focus:ring-gray-500 active:scale-95",
-      ghost:
-        "text-primary-600 hover:bg-primary-50 focus:ring-primary-500 active:scale-95",
-      dark: "bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-700 shadow-md hover:shadow-lg active:scale-95",
+        "border-2 border-gray-300 text-gray-700 hover:border-gray-900 hover:bg-gray-50 focus:ring-gray-500",
+      ghost: "text-primary-600 hover:bg-primary-50 focus:ring-primary-500",
+      dark: "bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-700",
     };
 
     const sizes = {
@@ -53,7 +52,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <>
             <svg
-              className="animate-spin -ml-1 mr-2 h-4 w-4"
+              className="animate-spin -ml-1 h-4 w-4"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
