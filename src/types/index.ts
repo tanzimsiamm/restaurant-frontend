@@ -35,8 +35,10 @@ export interface ISlider {
   subtitle?: string;
   description?: string;
   image: string;
+  thumbnailImage?: string;
   buttonText?: string;
   buttonLink?: string;
+  bgColor?: string;
   order: number;
   isActive: boolean;
   createdAt: string;

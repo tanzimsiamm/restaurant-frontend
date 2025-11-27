@@ -14,11 +14,19 @@ export const useSliders = (isActive: boolean = true) => {
       try {
         setLoading(true);
         const response = await sliderService.getAll(isActive);
-        setSliders(response.data);
+        
+        if (response.data && Array.isArray(response.data)) {
+          setSliders(response.data);
+        } else {
+          console.error('Invalid sliders response:', response);
+          setSliders([]);
+        }
+        
         setError(null);
       } catch (err) {
         setError('Failed to fetch sliders');
-        console.error(err);
+        console.error('Slider fetch error:', err);
+        setSliders([]);
       } finally {
         setLoading(false);
       }
