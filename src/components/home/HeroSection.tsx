@@ -47,7 +47,10 @@ const HeroSection: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setSearchOpen(false);
       }
     };
@@ -89,7 +92,6 @@ const HeroSection: React.FC = () => {
     >
       <section className="pt-6 pb-16 text-white">
         <Container className="px-4 sm:px-6 lg:px-8">
-          
           {/* HEADER */}
           <header className="mb-16 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-8">
             <Link
@@ -100,7 +102,10 @@ const HeroSection: React.FC = () => {
             </Link>
 
             {/* SEARCH */}
-            <div ref={searchRef} className="relative w-full sm:w-auto flex-1 max-w-2xl">
+            <div
+              ref={searchRef}
+              className="relative w-full sm:w-auto flex-1 max-w-2xl"
+            >
               <div className="relative w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
 
@@ -129,7 +134,8 @@ const HeroSection: React.FC = () => {
               {/* DROPDOWN */}
               <AnimatePresence>
                 {searchOpen &&
-                  (searchQuery.trim().length > 0 || searchResults.length > 0) && (
+                  (searchQuery.trim().length > 0 ||
+                    searchResults.length > 0) && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -137,7 +143,9 @@ const HeroSection: React.FC = () => {
                       className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border overflow-hidden z-50 max-h-80 overflow-y-auto"
                     >
                       {loading ? (
-                        <div className="p-4 text-center text-gray-500">Searching...</div>
+                        <div className="p-4 text-center text-gray-500">
+                          Searching...
+                        </div>
                       ) : searchResults.length > 0 ? (
                         <div className="py-2">
                           {searchResults.map((product) => (
@@ -173,7 +181,7 @@ const HeroSection: React.FC = () => {
                         </div>
                       ) : searchQuery.trim().length >= 2 ? (
                         <div className="p-4 text-center text-gray-500">
-                          No results found for "{searchQuery}"
+                          No results found for &quot;{searchQuery}&quot;
                         </div>
                       ) : (
                         <div className="p-4 text-center text-gray-400 text-sm">
@@ -188,7 +196,6 @@ const HeroSection: React.FC = () => {
 
           {/* MAIN CONTENT GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
             {/* LEFT TEXT */}
             <motion.div initial="initial" animate="animate" variants={fadeInUp}>
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 tracking-tight text-center lg:text-left">
@@ -196,8 +203,9 @@ const HeroSection: React.FC = () => {
               </h1>
 
               <p className="text-base sm:text-lg md:text-xl text-white/90 font-semibold mb-10 leading-relaxed max-w-xl mx-auto lg:mx-0 text-center lg:text-left">
-                Breakfast provides essential nutrients to kick-start the day with 
-                fruits, cereals, dairy, and proteins that contribute to a balanced diet.
+                Breakfast provides essential nutrients to kick-start the day
+                with fruits, cereals, dairy, and proteins that contribute to a
+                balanced diet.
               </p>
 
               {/* THUMBNAILS */}
@@ -229,7 +237,7 @@ const HeroSection: React.FC = () => {
                     {selectedItem.id === item.id && (
                       <motion.div
                         layoutId="underline"
-                        className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-1.5 bg-white rounded-full"
+                        className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-12 sm:w-16 md:w-20 h-1 bg-white rounded-2xl"
                       />
                     )}
                   </motion.div>
@@ -238,7 +246,7 @@ const HeroSection: React.FC = () => {
             </motion.div>
 
             {/* RIGHT BIG IMAGE */}
-            <div className="relative flex justify-center items-center h-[320px] sm:h-[400px] md:h-[500px]">
+            <div className="relative flex justify-center items-center h-80 sm:h-[400px] md:h-[500px]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedItem.id}
@@ -246,7 +254,7 @@ const HeroSection: React.FC = () => {
                   animate={{ opacity: 1, x: 0, rotate: 0 }}
                   exit={{ opacity: 0, x: -100, rotate: -360 }}
                   transition={{ duration: 0.6 }}
-                  className="absolute w-[220px] sm:w-[320px] md:w-[450px] h-[220px] sm:h-[320px] md:h-[450px] rounded-full overflow-hidden shadow-2xl border-8 border-white/20"
+                  className="absolute w-[220px] sm:w-[320px] md:w-[450px] h-[220px] sm:h-80 md:h-[450px] rounded-full overflow-hidden shadow-2xl border-8 border-white/20"
                 >
                   <Image
                     src={selectedItem.image}
