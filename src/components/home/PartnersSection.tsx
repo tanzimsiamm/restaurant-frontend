@@ -54,7 +54,7 @@ const PartnersSection: React.FC = () => {
               {duplicatedPartners.map((partner, index) => (
                 <div
                   key={`${partner.id}-${index}`}
-                  className="flex-shrink-0 flex items-center justify-center"
+                  className="shrink-0 flex items-center justify-center"
                 >
                   <Image
                     src={partner.logo}

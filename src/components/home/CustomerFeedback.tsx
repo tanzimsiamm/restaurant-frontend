@@ -96,7 +96,7 @@ const CustomerFeedback: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-700 rounded-full -z-10"></div>
             
             {/* Triangle Accent */}
-           <div className="absolute top-0 right-0 w-0 h-0 border-l-[200px] border-l-transparent border-t-[200px] border-t-red-700 -z-10"></div>
+           <div className="absolute top-0 right-0 w-0 h-0 border-l-200 border-l-transparent border-t-200 border-t-red-700 -z-10"></div>
 
 
             {/* Chef Image */}

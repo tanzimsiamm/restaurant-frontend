@@ -43,6 +43,24 @@ export interface ISlider {
   updatedAt: string;
 }
 
+export interface ITeam {
+  _id: string;
+  name: string;
+  position: string;
+  image: string;
+  bio?: string;
+  order: number;
+  isActive: boolean;
+  socialLinks?: {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 export interface ApiResponse<T> {
   success: boolean;

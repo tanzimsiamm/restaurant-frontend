@@ -15,22 +15,22 @@ import Image from "next/image";
 const breakfastItems = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800", // Waffles
+    image: "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800",
     bgColor: "#8B0000", // Dark Red
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800", // Pancakes/Berries
+    image: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800",
     bgColor: "#A52A2A", // Brownish Red
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800", // French Toast
+    image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800",
     bgColor: "#C71585", // Medium Violet Red
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800", // Crepes
+    image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=800",
     bgColor: "#B22222", // Firebrick
   },
 ];
@@ -46,9 +46,13 @@ const HeroSection: React.FC = () => {
   // State to keep track of the currently selected item (image + color)
   const [selectedItem, setSelectedItem] = useState(breakfastItems[0]);
 
+  // Close search on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setSearchOpen(false);
       }
     };
@@ -56,6 +60,7 @@ const HeroSection: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Search functionality
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (debouncedSearch.trim().length < 2) {
@@ -65,13 +70,24 @@ const HeroSection: React.FC = () => {
 
       setLoading(true);
       try {
+        console.log("🔍 Searching for:", debouncedSearch);
         const response = await productService.getAll({
           search: debouncedSearch,
           limit: 5,
         });
-        setSearchResults(response.data.products);
+        
+        console.log("✅ Search results:", response);
+        
+        if (response?.data?.products) {
+          setSearchResults(response.data.products);
+        } else if (Array.isArray(response?.data)) {
+          setSearchResults(response.data);
+        } else {
+          setSearchResults([]);
+        }
       } catch (error) {
-        console.error("Search error:", error);
+        console.error("❌ Search error:", error);
+        setSearchResults([]);
       } finally {
         setLoading(false);
       }
@@ -81,7 +97,6 @@ const HeroSection: React.FC = () => {
   }, [debouncedSearch]);
 
   return (
-    // Animate the background color of the entire section
     <motion.div
       className="min-h-screen transition-colors duration-700 ease-in-out"
       animate={{ backgroundColor: selectedItem.bgColor }}
@@ -89,16 +104,16 @@ const HeroSection: React.FC = () => {
       <section className="pt-8 pb-16 text-white">
         <Container>
           {/* Header with Logo and Search */}
-          <header className="mb-16 flex items-center justify-between">
+          <header className="mb-16 flex items-center justify-between gap-8">
             <Link
               href="/"
-              className="text-3xl font-bold tracking-wider hover:text-gray-200 transition-colors"
+              className="text-3xl font-bold tracking-wider hover:text-gray-200 transition-colors whitespace-nowrap"
             >
               RESTAURANT
             </Link>
 
-            <div ref={searchRef} className="relative">
-              <div className="relative w-full md:w-96">
+            <div ref={searchRef} className="relative flex-1 max-w-2xl">
+              <div className="relative w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 z-10" />
                 <input
                   type="text"
@@ -123,48 +138,68 @@ const HeroSection: React.FC = () => {
 
               {/* Search Results Dropdown */}
               <AnimatePresence>
-                {searchOpen && (searchQuery.trim().length > 0 || searchResults.length > 0) && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border overflow-hidden z-50"
-                  >
-                    {loading ? (
-                      <div className="p-4 text-center text-gray-500">Searching...</div>
-                    ) : searchResults.length > 0 ? (
-                      searchResults.map((product) => (
-                        <Link
-                          key={product._id}
-                          href={`/products/${product.slug}`}
-                          onClick={() => {
-                            setSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-gray-800"
-                        >
-                          <Image
-                            src={product.images[0]}
-                            alt={product.name}
-                            width={48}
-                            height={48}
-                            className="rounded object-cover"
-                          />
-                          <div>
-                            <h4 className="text-sm font-medium">{product.name}</h4>
-                            <p className="text-xs text-gray-500">
-                              ${product.discountPrice || product.price}
-                            </p>
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <div className="p-4 text-center text-gray-400 text-sm">
-                        No results found
-                      </div>
-                    )}
-                  </motion.div>
-                )}
+                {searchOpen &&
+                  (searchQuery.trim().length > 0 ||
+                    searchResults.length > 0) && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border overflow-hidden z-50 max-h-96 overflow-y-auto"
+                    >
+                      {loading ? (
+                        <div className="p-4 text-center text-gray-500">
+                          Searching...
+                        </div>
+                      ) : searchResults.length > 0 ? (
+                        <div className="py-2">
+                          {searchResults.map((product) => (
+                            <Link
+                              key={product._id}
+                              href={`/products/${product.slug}`}
+                              onClick={() => {
+                                setSearchOpen(false);
+                                setSearchQuery("");
+                              }}
+                              className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors text-gray-800"
+                            >
+                              {product.images && product.images[0] ? (
+                                <div className="relative w-12 h-12 shrink-0">
+                                  <Image
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    fill
+                                    className="rounded object-cover"
+                                    sizes="48px"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center shrink-0">
+                                  <span className="text-gray-400 text-xs">No img</span>
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-medium truncate">
+                                  {product.name}
+                                </h4>
+                                <p className="text-xs text-gray-500">
+                                  ${product.discountPrice || product.price}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      ) : searchQuery.trim().length >= 2 ? (
+                        <div className="p-4 text-center text-gray-500">
+                          No results found for &quot;{searchQuery}&quot;
+                        </div>
+                      ) : (
+                        <div className="p-4 text-center text-gray-400 text-sm">
+                          Type at least 2 characters to search
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
               </AnimatePresence>
             </div>
           </header>
@@ -177,7 +212,10 @@ const HeroSection: React.FC = () => {
                 BREAKFAST
               </h1>
               <p className="text-lg md:text-xl text-white/90 mb-12 leading-relaxed max-w-xl">
-                Breakfast, often referred to as the ‘most important meal of the day’, provides essential nutrients to kick start our day. It includes a variety of foods, like fruits, cereals, dairy products, and proteins, that contribute to a balanced diet.
+                Breakfast, often referred to as the most important meal of the
+                day, provides essential nutrients to kick start our day. It
+                includes a variety of foods, like fruits, cereals, dairy
+                products, and proteins, that contribute to a balanced diet.
               </p>
 
               {/* Thumbnails */}
@@ -199,6 +237,7 @@ const HeroSection: React.FC = () => {
                       alt={`Breakfast item ${item.id}`}
                       fill
                       className="object-cover"
+                      sizes="(max-width: 768px) 80px, 96px"
                     />
                   </motion.div>
                 ))}
@@ -224,10 +263,15 @@ const HeroSection: React.FC = () => {
                     alt="Selected breakfast"
                     fill
                     className="object-cover"
-                    priority 
+                    priority
+                    sizes="(max-width: 768px) 400px, 550px"
                   />
                 </motion.div>
               </AnimatePresence>
+
+              {/* Decorative blur effects */}
+              <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-white/10 rounded-full -z-10 blur-3xl"></div>
+              <div className="absolute -top-6 -left-6 w-48 h-48 bg-white/10 rounded-full -z-10 blur-3xl"></div>
             </div>
           </div>
         </Container>

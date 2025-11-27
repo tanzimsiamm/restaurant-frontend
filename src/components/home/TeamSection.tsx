@@ -1,100 +1,93 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-
-interface TeamMember {
-  id: number;
-  name: string;
-  position: string;
-  image: string;
-}
+import Image from "next/image";
+import { useTeam } from "@/src/hooks/useTeam";
+import Loading from "../ui/Loading";
 
 const TeamSection: React.FC = () => {
-  const teamMembers: TeamMember[] = [
-    {
-      id: 1,
-      name: 'Mark Henry',
-      position: 'Owner',
-      image: 'https://images.unsplash.com/photo-1566554273541-37a9ca77b91f?w=400&h=500&fit=crop',
-    },
-    {
-      id: 2,
-      name: 'Lucky Helen',
-      position: 'Chef',
-      image: 'https://images.unsplash.com/photo-1583394293214-28ded15ee548?w=400&h=400&fit=crop',
-    },
-    {
-      id: 3,
-      name: 'Moon Henry',
-      position: 'Founder',
-      image: 'https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=400&h=400&fit=crop',
-    },
-    {
-      id: 4,
-      name: 'Tom Monrow',
-      position: 'Specialist',
-      image: 'https://images.unsplash.com/photo-1600180758890-6b94519a8ba6?w=400&h=400&fit=crop',
-    },
-  ];
+  const { teamMembers, loading, error } = useTeam(true);
+
+  if (loading) {
+    return (
+      <section className="relative bg-white pb-20">
+        <div className="flex justify-center items-center py-20">
+          <Loading size="lg" />
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="relative bg-white pb-20">
+        <div className="flex justify-center items-center py-20">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
+            {error}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!teamMembers || teamMembers.length === 0) {
+    return null;
+  }
 
   return (
     <section className="relative bg-white pb-20">
-      {/* Red Background with overlay image */}
-      <div className="relative bg-red-600 py-20">
+      {/* Red Background with overlay image - only covers header area */}
+      <div className="relative bg-red-600 py-20 pb-44">
         {/* Background Pattern/Image */}
-        <div 
+        <div
           className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&h=400&fit=crop)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundImage:
+              "url(https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&h=400&fit=crop)",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         ></div>
-        
-        {/* Content */}
-        <div className="relative max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-bold text-white mb-4">
-            Team Member
-          </h2>
-          <p className="text-white text-lg max-w-2xl mx-auto">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Varius sed pharetra dictum neque massa congue
+
+        {/* Text Content */}
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-5xl font-bold text-white mb-4">Team Members</h2>
+
+          <p className="text-white text-lg max-w-2xl mx-auto leading-relaxed">
+            Our dedicated chefs and expert team carefully prepare every dish
+            using fresh and high-quality ingredients. We prioritize taste,
+            hygiene, and customer satisfaction above everything.
           </p>
         </div>
       </div>
 
-      {/* Team Cards - Overlapping the red section */}
-      <div className="relative -mt-32">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teamMembers.map((member) => (
-              <div
-                key={member.id}
-                className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-              >
-                {/* Member Image */}
-                <div className="relative h-80 overflow-hidden">
-                  <Image
-                    src={member.image}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  />
-                </div>
-
-                {/* Member Info */}
-                <div className="p-6 text-center bg-white">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {member.position}
-                  </p>
-                </div>
+      {/* Team Cards - positioned to overlap the red section */}
+      <div className="relative -mt-40 max-w-6xl mx-auto px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {teamMembers.map((member) => (
+            <div
+              key={member._id}
+              className="bg-white shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+            >
+              {/* Member Image */}
+              <div className="relative h-72 overflow-hidden">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                />
               </div>
-            ))}
-          </div>
+
+              {/* Member Info */}
+              <div className="p-6 text-center">
+                <h3 className="text-xl font-bold text-gray-900 mb-1">
+                  {member.name}
+                </h3>
+                <p className="text-gray-600 text-sm">{member.position}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
